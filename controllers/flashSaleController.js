@@ -22,6 +22,10 @@ exports.placeOrder = async (req, res) => {
       return res.status(404).json({ message: "Customer not found" });
 
     const product = await Product.findById(productId);
+
+    if (product.stock == 0)
+      return res.status(400).json({ message: "Out of stock" });
+
     if (!product || product.stock < quantity)
       return res.status(400).json({ message: "Insufficient stock" });
 
@@ -48,6 +52,32 @@ exports.getStockStatus = async (req, res) => {
     if (!product) return res.status(404).json({ message: "Product not found" });
 
     res.status(200).json({ stock: product.stock });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+//get customer details
+// Get Flash Sale Details
+exports.getCustomer = async (req, res) => {
+  try {
+    const customer = await Customer.findById(req.params.id);
+    if (!customer)
+      return res.status(404).json({ message: "Customer not found" });
+    res.status(200).json(customer);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+//get details of single product
+exports.getProduct = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+
+    if (!product) return res.status(404).json({ message: "Product not found" });
+
+    res.status(200).json(product);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

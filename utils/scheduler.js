@@ -2,7 +2,7 @@ const cron = require("node-cron");
 const Product = require("../models/product");
 
 const startFlashSale = () => {
-  cron.schedule("0 0 * * 0", async () => {
+  cron.schedule("29 20 * * *", async () => {
     // Flash sale starts at 12 AM on Sunday
     try {
       const product = await Product.findOne({ name: "iPhone" });
