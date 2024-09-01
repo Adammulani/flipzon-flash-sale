@@ -21,10 +21,16 @@ exports.placeOrder = async (req, res) => {
     if (!customer)
       return res.status(404).json({ message: "Customer not found" });
 
+    // Fairness Rule: Limit purchase to 2 items per customer
+    if (quantity > 2)
+      return res
+        .status(400)
+        .json({ message: "You cannot purchase more than 2 items" });
+
     const product = await Product.findById(productId);
 
-    if (product.stock == 0)
-      return res.status(400).json({ message: "Out of stock" });
+    if (!product || product.stock == 0)
+      return res.status(400).json({ message: "Product is out of stock." });
 
     if (!product || product.stock < quantity)
       return res.status(400).json({ message: "Insufficient stock" });
@@ -32,6 +38,7 @@ exports.placeOrder = async (req, res) => {
     product.stock -= quantity;
     await product.save();
 
+    // Record the transaction
     const order = new Order({
       customerId: customer._id,
       productId: product._id,
