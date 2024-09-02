@@ -29,13 +29,13 @@ exports.placeOrder = async (req, res) => {
 
     const product = await Product.findById(productId);
 
-    if (!product || product.stock == 0)
-      return res.status(400).json({ message: "Product is out of stock." });
-
     if (!product || product.stock < quantity)
       return res.status(400).json({ message: "Insufficient stock" });
 
-    product.stock -= quantity;
+    if (!product || product.stock == 0)
+      return res.status(400).json({ message: "Product is out of stock." });
+
+    product.stock -= quantity; // Deduct the stock
     await product.save();
 
     // Record the transaction

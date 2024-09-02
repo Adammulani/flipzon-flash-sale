@@ -15,7 +15,9 @@ const startFlashSale = () => {
           await product.save();
           console.log("Flash Sale started: 1000 iPhones available");
         } else {
-          console.log("Flash Sale already in progress.");
+          console.log(
+            `Flash Sale already in progress, available stock=${product.stock}`
+          );
         }
       }
     } catch (error) {
